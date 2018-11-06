@@ -1,3 +1,12 @@
+/**
+ * Adds a menu item so you can run this script once added without having to open the script editor.
+ */
+function onOpen() {
+  DocumentApp.getUi().createMenu('Run...')
+  .addItem('Convert to Clean HTML', 'ConvertGoogleDocToCleanHtml')
+  .addToUi();
+}
+
 function ConvertGoogleDocToCleanHtml() {
   var body = DocumentApp.getActiveDocument().getBody();
   var numChildren = body.getNumChildren();
