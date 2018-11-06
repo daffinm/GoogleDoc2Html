@@ -1,7 +1,7 @@
 ## Google Doc to clean HTML converter ##
 
  1. Open your Google Doc and go Tools > Script Editor. You
-    should see a new window open with a nice code editor. 
+    should see a new window open with a nice code editor. Delete the existing content so the file is clean.
  2. Copy and paste the code from here into the script editor: [GoogleDocs2Html][1]
  3. Go to the File menu and Save the file the script as GoogleDoc2Html.
  4. Close the script editor and refresh the document. Wait until 'Run...' appears to the right of the Help menu.
