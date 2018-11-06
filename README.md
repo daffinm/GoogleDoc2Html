@@ -9,10 +9,10 @@
  5. A popup window will appear entitled 'Authorization Required'.  
     Click continue, select a Google account
  6. You will see a warning. "This app isn't verified". 
-    Click 'Advanced' > Go to Untitled project (unsafe)
+    Click 'Advanced' > 'Go to Project_Name project (unsafe)'
  7. Allow the following permissions:
-    Viw and manage your Google Docs documents.
-    Send email as you
+    - View and manage your Google Docs documents.
+    - Send email as you
  6. You will get an email at your Google Account containing the HTML
     output of the Google Doc with inline images.
 
