@@ -67,6 +67,7 @@ function dumpAttributes(atts) {
 }
 
 function processItem(item, listCounters, images) {
+
     var output = [];
     var prefix = "", suffix = "";
 
@@ -92,8 +93,7 @@ function processItem(item, listCounters, images) {
         if (item.getNumChildren() == 0)
             return "";
     }
-    else if (item.getType() == DocumentApp.ElementType.INLINE_IMAGE)
-    {
+    else if (item.getType() == DocumentApp.ElementType.INLINE_IMAGE) {
         processImage(item, images, output);
     }
     else if (item.getType()===DocumentApp.ElementType.LIST_ITEM) {
@@ -144,7 +144,6 @@ function processItem(item, listCounters, images) {
     }
     else {
 
-
         if (item.getNumChildren) {
             var numChildren = item.getNumChildren();
 
@@ -154,7 +153,6 @@ function processItem(item, listCounters, images) {
                 output.push(processItem(child, listCounters, images));
             }
         }
-
     }
 
     output.push(suffix);
@@ -163,6 +161,7 @@ function processItem(item, listCounters, images) {
 
 
 function processText(item, output) {
+
     var text = item.getText();
     var indices = item.getTextAttributeIndices();
 
@@ -174,7 +173,7 @@ function processText(item, output) {
         else if(item.isItalic()) {
             output.push('<blockquote>' + text + '</blockquote>');
         }
-        else if (text.trim().indexOf('http://') == 0) {
+        else if (text.trim().match('^(http|https|mailto):\\/\\/.*')) {
             output.push('<a href="' + text + '" rel="nofollow">' + text + '</a>');
         }
         else {
@@ -184,12 +183,11 @@ function processText(item, output) {
     else {
 
         for (var i=0; i < indices.length; i ++) {
+
             var partAtts = item.getAttributes(indices[i]);
             var startPos = indices[i];
             var endPos = i+1 < indices.length ? indices[i+1]: text.length;
             var partText = text.substring(startPos, endPos);
-
-            Logger.log(partText);
 
             if (partAtts.ITALIC) {
                 output.push('<i>');
@@ -197,9 +195,14 @@ function processText(item, output) {
             if (partAtts.BOLD) {
                 output.push('<strong>');
             }
-            if (partAtts.UNDERLINE) {
-                output.push('<u>');
+            if (partAtts.LINK_URL) {
+                output.push('<a href="' +partAtts.LINK_URL+'">');
             }
+
+            // We don't handle underlines because these get confused with links...
+//            if (partAtts.UNDERLINE) {
+//                output.push('<u>');
+//            }
 
             // If someone has written [xxx] and made this whole text some special font, like superscript
             // then treat it as a reference and make it superscript.
@@ -220,9 +223,12 @@ function processText(item, output) {
             if (partAtts.BOLD) {
                 output.push('</strong>');
             }
-            if (partAtts.UNDERLINE) {
-                output.push('</u>');
+            if (partAtts.LINK_URL) {
+                output.push('</a>');
             }
+//            if (partAtts.UNDERLINE) {
+//                output.push('</u>');
+//            }
 
         }
     }
