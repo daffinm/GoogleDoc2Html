@@ -1,3 +1,5 @@
+var includeHtmlInEmailBody = false;
+var processImages = false;
 /**
  * Adds a menu item so you can run this script once added without having to open the script editor.
  */
@@ -41,10 +43,11 @@ function emailHtml(html, images) {
 
     var name = DocumentApp.getActiveDocument().getName()+".html";
     attachments.push({"fileName":name, "mimeType": "text/html", "content": html});
+    var body = includeHtmlInEmailBody ? html : "See attachment for HTML."
     MailApp.sendEmail({
         to: Session.getActiveUser().getEmail(),
         subject: name,
-        htmlBody: html,
+        htmlBody: body,
         inlineImages: inlineImages,
         attachments: attachments
     });
@@ -85,15 +88,17 @@ function processItem(item, listCounters, images) {
             case DocumentApp.ParagraphHeading.HEADING2:
                 prefix = "<h2>", suffix = "</h2>"; break;
             case DocumentApp.ParagraphHeading.HEADING1:
-                prefix = "<h1>", suffix = "</h1>"; break;
+                // Break up the HTML. Add a line break before a heading 1.
+                prefix = "\n\n\n<h1>", suffix = "</h1>"; break;
             default:
                 prefix = "<p>", suffix = "</p>";
         }
 
-        if (item.getNumChildren() == 0)
+        if (item.getNumChildren() == 0) {
             return "";
+        }
     }
-    else if (item.getType() == DocumentApp.ElementType.INLINE_IMAGE) {
+    else if (item.getType() == DocumentApp.ElementType.INLINE_IMAGE && processImages) {
         processImage(item, images, output);
     }
     else if (item.getType()===DocumentApp.ElementType.LIST_ITEM) {
@@ -200,9 +205,9 @@ function processText(item, output) {
             }
 
             // We don't handle underlines because these get confused with links...
-//            if (partAtts.UNDERLINE) {
-//                output.push('<u>');
-//            }
+            // if (partAtts.UNDERLINE) {
+            //    output.push('<u>');
+            // }
 
             // If someone has written [xxx] and made this whole text some special font, like superscript
             // then treat it as a reference and make it superscript.
@@ -226,9 +231,10 @@ function processText(item, output) {
             if (partAtts.LINK_URL) {
                 output.push('</a>');
             }
-//            if (partAtts.UNDERLINE) {
-//                output.push('</u>');
-//            }
+            // We don't handle underlines because these get confused with links...
+            // if (partAtts.UNDERLINE) {
+            //    output.push('</u>');
+            // }
 
         }
     }
